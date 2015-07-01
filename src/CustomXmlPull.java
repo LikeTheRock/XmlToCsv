@@ -21,20 +21,20 @@ public class CustomXmlPull {
 		while(!( userInput.equals("no")||userInput.equals("No")||userInput.equals("N")) ){
 			//GET USER INPUT
 			userInput = scan.nextLine();
-		/*	if( ( userInput.equals("no")||userInput.equals("No")||userInput.equals("N")) ){
+			if( ( userInput.equals("no")||userInput.equals("No")||userInput.equals("N")) ){
 				break;
-			}*/
+			}
 			System.out.println(userInput);//debug
 			//DO SOMETHING WITH USER INPUT
 			getTextXDeep(userInput);
-
 		}
 		System.out.println();
 
+		scan.close();
 		Object someArrayOrDataObject = null;//TODO: declare this as something helpful
 		printDataToCSV(someArrayOrDataObject);
 
-	}//END MAIN
+	}//===============================================================END MAIN=============================================================================================
 
 	private static void printDataToCSV(Object someArrayOrDataObject) {
 		// TODO Auto-generated method stub
@@ -50,13 +50,20 @@ public class CustomXmlPull {
 	 */
 	private static void getTextXDeep(String userInput) {
 		ArrayList<String> args = new ArrayList<String>();
-		// TODO Will parse the userInput into tags separated by spaces.
+		// Parse the userInput into tags separated by spaces.
 		while (userInput.contains(" ") ){
-			args.add( userInput.substring(0, userInput.indexOf(" ")+1) );
+			args.add( userInput.substring(0, userInput.indexOf(" ")) );
+			userInput=userInput.substring( userInput.indexOf(" ")+1, userInput.length());
+			
+			System.out.println(args);
 		}
+		args.add(userInput);
 		System.out.println(args);//debug
 		// TODO If bad input is entered will, ask for correct input, with an example
 		// TODO Will grab the text data after searching n tags deep. n will be based on the input
+		for (int i = 0; i < data.size(); i++) {
+			
+		}
 	}
 
 	/**Will populate the Names and Paths of the data array (of some data object)
