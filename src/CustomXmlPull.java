@@ -1,10 +1,20 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
 public class CustomXmlPull {
 	static ArrayList<String> whiteList = new ArrayList<String>();
 	static ArrayList<DataContainer> data = new ArrayList<DataContainer>();
+	static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 	public static void main(String[] args) {
 		//VARIABLES
@@ -50,20 +60,64 @@ public class CustomXmlPull {
 	 */
 	private static void getTextXDeep(String userInput) {
 		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> argsCopy = new ArrayList<String>();
+		ArrayList<NodeList> children = new ArrayList<NodeList>();
+		int notChildren = 0;
+//		ArrayList<Integer> childIndexMarkers = new 	ArrayList<Integer>();
 		// Parse the userInput into tags separated by spaces.
 		while (userInput.contains(" ") ){
 			args.add( userInput.substring(0, userInput.indexOf(" ")) );
 			userInput=userInput.substring( userInput.indexOf(" ")+1, userInput.length());
-			
-			System.out.println(args);
 		}
 		args.add(userInput);
+		argsCopy.addAll( args) ;
 		System.out.println(args);//debug
 		// TODO If bad input is entered will, ask for correct input, with an example
 		// TODO Will grab the text data after searching n tags deep. n will be based on the input
+		System.out.println("Data.size(): "+ data.size() );
 		for (int i = 0; i < data.size(); i++) {
-			
+			//open & read X deep
+			argsCopy.addAll( args );
+			Document doc = openDoc(data.get(i).getPath());
+			NodeList temp = doc.getElementsByTagName(args.get(0)); 
+			children.add( temp );	
+//			System.out.println(doc); //TODO: the doc is null???
+			argsCopy.remove(0);
+			while( !argsCopy.isEmpty() ){
+				for (int j = notChildren; j < children.size() ; j++) {
+					children.addAll( getChilrenMatchingTag(children.get(j), args.get(0)));
+				}
+				argsCopy.remove(0);
+				if(argsCopy.size()!=0){
+					notChildren=children.size();
+				}
+			}
+			//TODO: Store the data accordingly in data
+			for (int j = notChildren; j < children.size() ; j++) {
+				data.get(i).createNewDO(args.get(args.size()), );
+				//This may just need to be a bunch of stringPairs: (final tag & value)
+					//jk cant b because of may contain many occurences of
+			}
 		}
+	}
+	
+	private static ArrayList<String> getTextFromNodes (NodeList nodes){
+		ArrayList<String> array = new ArrayList<String>();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			array.addAll(  )
+		}
+		
+	}
+	
+	private static ArrayList<NodeList> getChilrenMatchingTag (NodeList parentList, String tag){
+		ArrayList<NodeList> children = new ArrayList<NodeList>();
+		System.out.println(parentList.getLength());//debug
+		for (int j = 0; j < parentList.getLength(); j++) {
+			if(parentList.item(j).getNodeName().equals(tag)){
+				children.add( parentList.item(j).getChildNodes() );
+			}
+		}
+		return children;
 	}
 
 	/**Will populate the Names and Paths of the data array (of some data object)
@@ -185,4 +239,29 @@ public class CustomXmlPull {
 		}
 		return string;
 	}
-}
+	/**
+	 * Creates a new document object from the passed path and returns it.
+	 * @param path
+	 * @param factory
+	 * @return doc
+	 */
+	protected static Document openDoc (String path ){
+		DocumentBuilder builder;
+		try {
+			builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(path);
+			return doc;
+		} catch (ParserConfigurationException e) {
+			System.out.println("Error on path:"+path);
+			e.printStackTrace();
+		} catch (SAXException e) {
+			System.out.println("Error on path:"+path);
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("Error on path:"+path);
+			e.printStackTrace();
+		}
+		return null;
+	}//end openDoc
+	
+}//END CLASS 
