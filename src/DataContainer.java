@@ -39,4 +39,9 @@ public class DataContainer {
 		DOs.add(new DataObject(name, al));
 	}
 	
+	public String toString(){
+		String string = "Name: "+ name + "\t" + "Path: " + path + "\t" + DOs; 
+		return string;
+	}
+	
 }

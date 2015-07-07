@@ -60,5 +60,9 @@ public class DataObject {
 	public void addDataElement(String s){
 		dataElements.add(s);
 	}
+	public String toString(){
+		String string = "DO Name:"+ name + "\t" + "DO Path:"+ path + "\t" + dataElements; 
+		return string;
+	}
 
 }

@@ -27,14 +27,14 @@ public class CustomXmlPull {
 //		System.out.println(userInput);//debug
 		getFolder(userInput);
 
-		System.out.println("Enter the tags you want to read the text of, separated by a space. Type [N] to quit.");
+		System.out.println("Enter the tags you want to read the text of, separated by a space. Type [exit] to quit.");
 		while(!( userInput.equals("no")||userInput.equals("No")||userInput.equals("N")) ){
 			//GET USER INPUT
 			userInput = scan.nextLine();
-			if( ( userInput.equals("no")||userInput.equals("No")||userInput.equals("N")) ){
+			if( ( userInput.equals("no")||userInput.equals("No")||userInput.equals("exit")) ){
 				break;
 			}
-			System.out.println(userInput);//debug
+			//System.out.println(userInput);//debug
 			//DO SOMETHING WITH USER INPUT
 			getTextXDeep(userInput);
 		}
@@ -71,47 +71,46 @@ public class CustomXmlPull {
 		}
 		args.add(userInput);
 		argsCopy.addAll( args) ;
-		System.out.println(args);//debug
 		// TODO If bad input is entered will, ask for correct input, with an example
 		// TODO Will grab the text data after searching n tags deep. n will be based on the input
-		System.out.println("Data.size(): "+ data.size() );
+//		System.out.println("Data.size(): "+ data.size() );//debug
 		for (int i = 0; i < data.size(); i++) {
 			//open & read X deep
 			argsCopy.addAll( args );
 			Document doc = openDoc(data.get(i).getPath());
 			NodeList temp = doc.getElementsByTagName(args.get(0)); 
-			children.add( temp );	
-//			System.out.println(doc); //TODO: the doc is null???
+			children.add( temp );
 			argsCopy.remove(0);
 			while( !argsCopy.isEmpty() ){
 				for (int j = notChildren; j < children.size() ; j++) {
-					children.addAll( getChilrenMatchingTag(children.get(j), args.get(0)));
+					children.addAll( getChilrenMatchingTag(children.get(j), argsCopy.get(0)));
 				}
 				argsCopy.remove(0);
-				if(argsCopy.size()!=0){
-					notChildren=children.size();
+				
+				if(argsCopy.isEmpty()){
+					System.out.print("bee");
+					for (int j2 = notChildren; j2 < children.size(); j2++) {//TODO: no boops, therefore notCHildrensize==childrensize90
+						System.out.println("-boop");
+						data.get(i).createNewDO(args.get(args.size()-1), getTextFromNodes(children.get(j2) ) );
+					}
 				}
+				notChildren=children.size();
 			}
-			//TODO: Store the data accordingly in data
-			for (int j = notChildren; j < children.size() ; j++) {
-				data.get(i).createNewDO(args.get(args.size()), );
-				//This may just need to be a bunch of stringPairs: (final tag & value)
-					//jk cant b because of may contain many occurences of
-			}
+			System.out.println(data.get(i).toString());
 		}
 	}
 	
 	private static ArrayList<String> getTextFromNodes (NodeList nodes){
 		ArrayList<String> array = new ArrayList<String>();
 		for (int i = 0; i < nodes.getLength(); i++) {
-			array.addAll(  )
+			array.add( nodes.item(i).getTextContent() );
 		}
-		
+		return array;
 	}
 	
 	private static ArrayList<NodeList> getChilrenMatchingTag (NodeList parentList, String tag){
 		ArrayList<NodeList> children = new ArrayList<NodeList>();
-		System.out.println(parentList.getLength());//debug
+//		System.out.println(parentList.getLength());//debug
 		for (int j = 0; j < parentList.getLength(); j++) {
 			if(parentList.item(j).getNodeName().equals(tag)){
 				children.add( parentList.item(j).getChildNodes() );
